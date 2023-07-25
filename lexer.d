@@ -44,6 +44,7 @@ class Lexer
 {
     string text;
     string currToken;
+    int line = 1;
     this(string text)
     {
         this.text = text;
@@ -51,10 +52,11 @@ class Lexer
 
     TokType nextToken()
     {
+
+Lagain:
         if (text.empty())
             return TokType.eof;
 
-Lagain:
         switch(text[0])
         {
             case '(' :
@@ -81,12 +83,14 @@ Lagain:
                 currToken = "*";
                 text.popFront();
                 return TokType.mul;
-            case ' ':
             case '\n':
             case '\r':
-            case '\t':
             case '\v':
             case '\f':
+                ++line;
+                goto case;
+            case ' ':
+            case '\t':
                 text.popFront();
                 goto Lagain;
             case '"' :
@@ -95,7 +99,7 @@ Lagain:
 
                 if (str.empty())
                 {
-                    writeln("Error: unterminated string");
+                    writefln("Error(%d): missing ending quote for string", line);
                     exit(1);
                 }
 
@@ -112,9 +116,9 @@ Lagain:
                 if (currToken.isNumeric())
                     return TokType.num;
 
-                if (!text.empty() && text[0].isDigit())
+                if (!text.empty() && currToken[0].isDigit())
                 {
-                    writeln("Error: An atom cannot start with a number");
+                    writefln("Error(%d): An atom cannot start with a number: `%s`", line, currToken);
                     exit(1);
                 }
 

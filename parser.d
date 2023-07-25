@@ -40,7 +40,7 @@ class Parser : Lexer
                     listMembers ~= new Atom(currToken, false);
                     break;
                 case TokType.eof:
-                    writeln("Error: found `EOF` when expecting list member or `)`");
+                    writefln("Error(%d): found `EOF` when expecting list member or `)`", line-1);
                     exit(1);
                 default:
                     assert(0);
@@ -53,8 +53,9 @@ class Parser : Lexer
     void check(TokType current, TokType expected)
     {
         if (current != expected)
-    {
-            writefln("Error: expected `%s`, but found `%s`", tokToString(expected), tokToString(current));
+        {
+            writefln("Error(%d): expected `%s`, but found `%s`", line, tokToString(expected), currToken);
+            exit(1);
         }
     }
 }

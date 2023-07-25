@@ -20,9 +20,9 @@ The parser currently outputs minimal errors, however, it should accept the major
 Improvements will be added soon.
 
 TODO:
-- add better error messages that include location
+- ~add better error messages that include location~
 - add comments (comments are not supported currently)
-- double check what atoms are accepted (is `1sd` a valid atom?)
+- ~double check what atoms are accepted (is `1sd` a valid atom?)~
 - add more complex tests
 - beautify code
 - optimize code
