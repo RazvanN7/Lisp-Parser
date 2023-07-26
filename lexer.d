@@ -1,10 +1,10 @@
 import std.range;
-import std.algorithm;
-import std.stdio;
-import std.ascii;
+import std.algorithm : findAmong, find;
+import std.stdio : writefln;
+import std.ascii : isDigit;
 import std.string : isNumeric;
 
-import core.stdc.stdlib;
+import core.stdc.stdlib : exit;
 
 enum TokType
 {

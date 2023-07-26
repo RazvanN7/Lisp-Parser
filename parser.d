@@ -1,7 +1,7 @@
-import lexer;
+import lexer : Lexer;
 import ast_nodes;
 
-import std.stdio : writefln, writeln;
+import std.stdio : writefln;
 import core.stdc.stdlib : exit;
 
 class Parser : Lexer

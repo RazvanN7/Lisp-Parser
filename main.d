@@ -1,7 +1,6 @@
-import std.stdio;
+import std.stdio : writeln;
 import std.file : readText;
-import std.range;
-import parser;
+import parser : Parser;
 
 int main(string[] args)
 {
