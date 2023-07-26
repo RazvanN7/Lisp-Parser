@@ -73,6 +73,10 @@ class Parser : Lexer
     }
 }
 
+/* ==============================================================================
+                            Unittests
+ */
+
 // initial test
 unittest
 {
@@ -95,19 +99,52 @@ unittest
 // test with lisp code that calculates the fth number in the Fibonnacci series
 unittest
 {
-    string test = "(defun fib (f)
-                      (if (numberp f)
-                          (if (integerp f)
-                    	  (if (<= 0 f)
-                    	      (if (or (zerop f) (= f 1))
-                    		  1
-                    		  (+ (fib (- f 1))
-                    		     (fib (- f 2))))
-                    	      (error \"Argument Is Negative\"))
-                    	  (error \"Argument Is Not An Integer Number\"))
-                          (error \"Argument Is Not A Number!!!\")))";
+    string test =
+        "(defun fib (f)
+          (if (numberp f)
+              (if (integerp f)
+        	  (if (<= 0 f)
+        	      (if (or (zerop f) (= f 1))
+        		  1
+        		  (+ (fib (- f 1))
+        		     (fib (- f 2))))
+        	      (error \"Argument Is Negative\"))
+        	  (error \"Argument Is Not An Integer Number\"))
+              (error \"Argument Is Not A Number!!!\")))
+        ";
+
     Parser p = new Parser(test);
     auto stmts = p.parseModule();
+
     assert(stmts[0].toString() == "[defun, fib, [f], [if, [numberp, f], [if, [integerp, f], [if, [<=, 0, f], [if, [or, [zerop, f], [=, f, 1]], 1, [+, [fib, [-, f, 1]], [fib, [-, f, 2]]]], [error, Argument Is Negative]], [error, Argument Is Not An Integer Number]], [error, Argument Is Not A Number!!!]]]");
 
+}
+
+// fibonaci golden with comments
+unittest
+{
+    string test =
+        ";; implementation of the fibonacci sequence 
+         ;; calculation with the golden ratio formula:
+         ;; Nx = ( (phi)^x - (1 - phi)^x ) / sqrt(5)
+         ;; where phi, the golden ratio, is:
+         ;; phi = 1.6180339887...
+
+         (defparameter phi 1.6180339887)
+
+         (defun fib_gold (n)
+           (if (numberp n)
+               (if (integerp n)
+         	  (if (>= n 0)
+         	      (floor (/ (- (expt phi n) (expt (- 1 phi) n) ) (sqrt 5)))
+         	      (error \"Argument Is Negative !!!\"))
+         	  (error \"Argument Is Not An Integer !!!\"))
+            (error \"Argument Is Not A Number\")))
+        ";
+
+    Parser p = new Parser(test);
+    auto stmts = p.parseModule();
+
+    assert(stmts[0].toString() == "[defparameter, phi, 1.6180339887]");
+    assert(stmts[1].toString() == "[defun, fib_gold, [n], [if, [numberp, n], [if, [integerp, n], [if, [>=, n, 0], [floor, [/, [-, [expt, phi, n], [expt, [-, 1, phi], n]], [sqrt, 5]]], [error, Argument Is Negative !!!]], [error, Argument Is Not An Integer !!!]], [error, Argument Is Not A Number]]]");
 }

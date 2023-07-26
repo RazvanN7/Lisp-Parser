@@ -38,7 +38,7 @@ string tokToString(TokType tok)
     assert(0, "This should not be reached");
 }
 
-string seps = " \n\r\t\v\f,)(+-/*";
+string seps = "\n\r\v\f \t;)(+-/*";
 
 class Lexer
 {
@@ -84,6 +84,11 @@ Lagain:
                 currToken = "*";
                 text.popFront();
                 return TokType.mul;
+            case ';' :
+                auto textTmp = text.findAmong(seps[0 .. 4]);
+                currToken = text[0 .. textTmp.ptr - text.ptr];
+                text = textTmp;
+                goto Lagain;
             case '\n':
             case '\r':
             case '\v':
@@ -206,4 +211,14 @@ unittest
     assert(lex.nextToken == TokType.lpar);
     assert(lex.nextToken == TokType.id);
     assert(lex.currToken == "first");
+}
+
+// comments are lexed properly
+unittest
+{
+    Lexer lex = new Lexer("; comment \n (list)");
+    assert(lex.nextToken == TokType.lpar);
+    assert(lex.nextToken == TokType.id);
+    assert(lex.currToken == "list");
+    assert(lex.nextToken == TokType.rpar);
 }
