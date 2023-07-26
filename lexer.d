@@ -51,6 +51,13 @@ class Lexer
         this.text = text;
     }
 
+    /*
+       All lexing is done here.
+       The first character is scanned to see if it is a special character.
+       Spaces, comments and newlines are skipped.
+       Atoms and stringed are stored in the `currToken` and the cursor is
+       advanced to the next character.
+    */
     TokType nextToken()
     {
 

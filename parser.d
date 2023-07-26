@@ -11,6 +11,9 @@ class Parser : Lexer
         super(text);
     }
 
+    /* A module is a collection of lists
+       Parse each list and store it in an array.
+     */
     LispList[] parseModule()
     {
         LispList[] stmts;
@@ -25,6 +28,10 @@ class Parser : Lexer
         return stmts;
     }
 
+    /*
+       A list is a collection of atoms and strings.
+       Scan until a closing parens in encountered.
+     */
     private LispList parseList()
     {
         AstNode[] listMembers;
