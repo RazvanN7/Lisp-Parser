@@ -42,9 +42,10 @@ string seps = " \n\r\t\v\f,)(+-/*";
 
 class Lexer
 {
-    string text;
+    private string text;
     string currToken;
     int line = 1;
+
     this(string text)
     {
         this.text = text;

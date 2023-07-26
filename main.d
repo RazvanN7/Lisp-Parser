@@ -5,7 +5,7 @@ import parser;
 
 int main(string[] args)
 {
-    if (args.empty)
+    if (args.length < 2)
     {
         writeln("Usage: ./lisp_parser file_to_parse");
         return 1;
@@ -15,9 +15,10 @@ int main(string[] args)
     string filetext = readText(fileToParse);
 
     Parser p = new Parser(filetext);
-    auto l = p.parseList();
+    auto stmts = p.parseModule();
 
-    writeln(l);
+    foreach(stmt; stmts)
+        writeln(stmt);
 
     return 0;
 }

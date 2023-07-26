@@ -9,10 +9,23 @@ class Parser : Lexer
     this(string text)
     {
         super(text);
-        check(nextToken(), TokType.lpar);
     }
 
-    LispList parseList()
+    LispList[] parseModule()
+    {
+        LispList[] stmts;
+        auto tok = nextToken();
+        while(tok != TokType.eof)
+        {
+            check(tok, TokType.lpar);
+            stmts ~= parseList();
+            tok = nextToken();
+        }
+
+        return stmts;
+    }
+
+    private LispList parseList()
     {
         AstNode[] listMembers;
         while(1)
@@ -65,5 +78,36 @@ unittest
 {
     string test = "(first (list2 1 (+ 2 3) 9))";
     Parser p = new Parser(test);
-    assert(p.parseList().toString() == "[first, [list2, 1, [+, 2, 3], 9]]");
+    auto stmts = p.parseModule();
+    assert(stmts[0].toString() == "[first, [list2, 1, [+, 2, 3], 9]]");
+}
+
+// multiple statements
+unittest
+{
+    string test = "(first (list2 1 (+ 2 3) 9))\n(first (list2 1 (+ 2 3) 9))";
+    Parser p = new Parser(test);
+    auto stmts = p.parseModule();
+    foreach(stmt; stmts)
+        assert(stmt.toString() == "[first, [list2, 1, [+, 2, 3], 9]]");
+}
+
+// test with lisp code that calculates the fth number in the Fibonnacci series
+unittest
+{
+    string test = "(defun fib (f)
+                      (if (numberp f)
+                          (if (integerp f)
+                    	  (if (<= 0 f)
+                    	      (if (or (zerop f) (= f 1))
+                    		  1
+                    		  (+ (fib (- f 1))
+                    		     (fib (- f 2))))
+                    	      (error \"Argument Is Negative\"))
+                    	  (error \"Argument Is Not An Integer Number\"))
+                          (error \"Argument Is Not A Number!!!\")))";
+    Parser p = new Parser(test);
+    auto stmts = p.parseModule();
+    assert(stmts[0].toString() == "[defun, fib, [f], [if, [numberp, f], [if, [integerp, f], [if, [<=, 0, f], [if, [or, [zerop, f], [=, f, 1]], 1, [+, [fib, [-, f, 1]], [fib, [-, f, 2]]]], [error, Argument Is Negative]], [error, Argument Is Not An Integer Number]], [error, Argument Is Not A Number!!!]]]");
+
 }
